@@ -1,0 +1,48 @@
+version: '3.5'
+
+services:
+
+  php81:
+    build:
+      ./docker/php
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8000:80"
+    deploy:
+      resources:
+        limits:
+          #          cpus: '0.001'
+          memory: 500m
+
+  mysql:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mypass
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    deploy:
+      resources:
+        limits:
+          #          cpus: '0.001'
+          memory: 500m
+
+  rabbitmq:
+    image: rabbitmq:3.10.2-management
+    restart: always
+    ports:
+    - "5672:5672"
+    - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: mypass
+
+networks:
+  default:
+    external: true
+    name: lamp_default
+
