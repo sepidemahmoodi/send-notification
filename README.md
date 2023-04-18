@@ -1,4 +1,4 @@
-##About project
+## About project
 This project is built on laravel framework and we used php8.1 and mysql latest version and rabbitmq image for dockerizing project.
 we used rabbitmq for consuming messages from queue.
 We have a console command in this project that name is `consume:notification` which responsible for consuming messages from queue and store them to db.
