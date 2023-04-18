@@ -1,0 +1,17 @@
+<?php
+namespace App\Classes\NotificationSender;
+
+class SmsSender implements SenderInterface
+{
+    private $adapter;
+
+    public function __construct(SmsSenderAdapter $adapter)
+    {
+        $this->adapter = $adapter;
+    }
+
+    public function send(array $data): bool
+    {
+        return $this->adapter->send($data);
+    }
+}

@@ -92,7 +92,15 @@ return [
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
+    ],
 
+    'rabbitmq' => [
+        'driver' => 'rabbitmq',
+        'host' => env('RABBITMQ_HOST', 'rabbitmq'),
+        'port' => env('RABBITMQ_PORT', 5672),
+        'vhost' => env('RABBITMQ_VHOST', '/'),
+        'login' => env('RABBITMQ_LOGIN', 'admin'),
+        'password' => env('RABBITMQ_PASSWORD', 'mypass'),
     ],
 
     /*
