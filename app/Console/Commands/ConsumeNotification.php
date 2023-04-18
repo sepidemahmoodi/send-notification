@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Classes\ConsumeMessage;
 use Illuminate\Console\Command;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 class ConsumeNotification extends Command
 {
@@ -27,7 +28,14 @@ class ConsumeNotification extends Command
     public function handle()
     {
         try{
-            (new ConsumeMessage)->consume();
+            $config = config('database.rabbitmq');
+            (new ConsumeMessage(new AMQPStreamConnection(
+                $config['host'],
+                $config['port'],
+                $config['login'],
+                $config['password'],
+                $config['vhost']
+            )))->consume();
             $this->info('Messages is consumed successfully.');
             return Command::SUCCESS;
         } catch(\Exception $e) {

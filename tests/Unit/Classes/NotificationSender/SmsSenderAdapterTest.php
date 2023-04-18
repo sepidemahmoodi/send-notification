@@ -1,7 +1,7 @@
 <?php
 namespace Tests\Classes\NotificationSender;
 
-use App\Classes\NotificationSender\SenderInterface;
+use App\Classes\NotificationSender\SenderAdapterInterface;
 use App\Classes\NotificationSender\SmsSenderAdapter;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
@@ -25,7 +25,7 @@ class SmsSenderAdapterTest extends TestCase
 
     public function testImplementsSenderInterface()
     {
-        $this->assertInstanceOf(SenderInterface::class, $this->adapter);
+        $this->assertInstanceOf(SenderAdapterInterface::class, $this->adapter);
     }
 
     public function testSendSuccess()
@@ -49,10 +49,11 @@ class SmsSenderAdapterTest extends TestCase
         $property->setAccessible(true);
         $property->setValue($this->adapter, $mockClient);
 
-        $result = $this->adapter->send([
-            'to' => '123456789',
-            'message' => 'Hello World!',
-        ]);
+        $result = $this->adapter->doOperation(
+             '123456789',
+            'test',
+            'Hello World!'
+        );
         $this->assertTrue($result);
     }
 
@@ -70,10 +71,11 @@ class SmsSenderAdapterTest extends TestCase
         $property->setAccessible(true);
         $property->setValue($this->adapter, $mockClient);
 
-        $result = $this->adapter->send([
-            'to' => '123456789',
-            'message' => 'Hello World!',
-        ]);
+        $result = $this->adapter->doOperation(
+            '123456789',
+            'test',
+            'Hello World!'
+        );
         $this->assertFalse($result);
     }
 }

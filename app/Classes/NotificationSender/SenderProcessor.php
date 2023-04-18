@@ -6,7 +6,7 @@ use App\Jobs\StoreNotificationInDbJob;
 class SenderProcessor
 {
     private SenderInterface $sender;
-    private boolean $sendStatus;
+    private $sendStatus;
 
     public function __construct(SenderInterface $sender) {
         $this->sender = $sender;

@@ -9,18 +9,13 @@ class ConsumeMessage
 {
     private $config;
     private $connection;
+
     const QUEUE_NAME = 'notification';
 
-    public function __construct()
+    public function __construct(array $config, AMQPStreamConnection $queueConnection)
     {
-        $this->config = config('database.rabbitmq');
-        $this->connection = new AMQPStreamConnection(
-            $this->config['host'],
-            $this->config['port'],
-            $this->config['login'],
-            $this->config['password'],
-            $this->config['vhost']
-        );
+        $this->config = $config;
+        $this->connection = $queueConnection;
     }
 
     public function consume()
@@ -28,7 +23,7 @@ class ConsumeMessage
         $channel = $this->connection->channel();
         $callback = function ($message){
             try {
-                $convertedToArrayMessage = $this->prepareMessageForStoring($message->body);
+                $convertedToArrayMessage = json_decode($message->body, true);
                 $senderClass = (new SenderFactory)->choose($convertedToArrayMessage['type']);
                 (new SenderProcessor($senderClass))->sendProcess($convertedToArrayMessage);
             } catch(\Exception $e) {
@@ -49,13 +44,6 @@ class ConsumeMessage
         }
         $channel->close();
         return 'Consuming process completed';
-    }
-
-    private function prepareMessageForStoring($message)
-    {
-        $message = str_replace("\n", "", $message);
-        $message = str_replace("\r", "", $message);
-        return json_decode($message, true);
     }
 
     public function __destruct()

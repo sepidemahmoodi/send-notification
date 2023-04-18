@@ -12,6 +12,6 @@ class SmsSender implements SenderInterface
 
     public function send(array $data): bool
     {
-        return $this->adapter->send($data);
+        return $this->adapter->doOperation($data['to'], $data['subject'] ?? 'test', $data['message']);
     }
 }

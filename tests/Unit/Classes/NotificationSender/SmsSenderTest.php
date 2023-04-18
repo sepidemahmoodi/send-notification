@@ -15,13 +15,14 @@ class SmsSenderTest extends TestCase
     {
         $mockData = [
             'to' => '123456789',
-            'message' => 'Hello World!',
+            'subject' => 'test',
+             'message' => 'Hello World!',
         ];
 
         $mockAdapter = $this->createMock(SmsSenderAdapter::class);
         $mockAdapter->expects($this->once())
-            ->method('send')
-            ->with($mockData)
+            ->method('doOperation')
+            ->with($mockData['to'], $mockData['subject'], $mockData['message'])
             ->willReturn(true);
 
         $sender = new SmsSender($mockAdapter);

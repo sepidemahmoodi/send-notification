@@ -21,4 +21,12 @@ class EmailSenderTest extends TestCase
 
         $this->assertTrue($result);
     }
+
+//    public function testFailure()
+//    {
+//        $data = ['to' => '', 'message' => 'Test email message'];
+//        $this->expectException(\Exception::class);
+//        $sender = new EmailSender();
+//        $sender->send($data);
+//    }
 }

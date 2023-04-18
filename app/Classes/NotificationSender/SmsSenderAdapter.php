@@ -4,7 +4,7 @@ namespace App\Classes\NotificationSender;
 
 use GuzzleHttp\Client;
 
-class SmsSenderAdapter implements SenderInterface
+class SmsSenderAdapter implements SenderAdapterInterface
 {
     private $baseUrl;
     private $response;
@@ -17,13 +17,13 @@ class SmsSenderAdapter implements SenderInterface
         $this->client = new Client();
     }
 
-    public function send(array $data): bool
+    public function doOperation(string $to, string $subject, string $message): bool
     {
         try {
             $this->response = $this->client->request('POST', $this->baseUrl, [
                 'form_params' => [
-                    'phone_number' => $data['to'],
-                    'message' => $data['message'],
+                    'phone_number' => $to,
+                    'message' => $message,
                 ],
             ]);
             $this->code = $this->response->getStatusCode();

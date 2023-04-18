@@ -6,11 +6,11 @@ class EmailSender implements SenderInterface
     public function send(array $data)
     {
         try {
-            mail($data['to'], 'send-email', $data['message']);
+            mail($data['to'], $data['subject'] ?? 'send-email', $data['message']);
             return true;
         } catch (\Exception $e)
         {
-            return false;
+            throw new \Exception($e->getMessage());
         }
     }
 }
