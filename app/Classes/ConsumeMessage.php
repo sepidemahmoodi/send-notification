@@ -1,20 +1,17 @@
 <?php
 namespace App\Classes;
 
-use App\Classes\NotificationSender\SenderFactory;
-use App\Classes\NotificationSender\SenderProcessor;
+use App\Jobs\ChooseMessageSenderJob;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 class ConsumeMessage
 {
-    private $config;
     private $connection;
 
     const QUEUE_NAME = 'notification';
 
-    public function __construct(array $config, AMQPStreamConnection $queueConnection)
+    public function __construct(AMQPStreamConnection $queueConnection)
     {
-        $this->config = $config;
         $this->connection = $queueConnection;
     }
 
@@ -23,9 +20,7 @@ class ConsumeMessage
         $channel = $this->connection->channel();
         $callback = function ($message){
             try {
-                $convertedToArrayMessage = json_decode($message->body, true);
-                $senderClass = (new SenderFactory)->choose($convertedToArrayMessage['type']);
-                (new SenderProcessor($senderClass))->sendProcess($convertedToArrayMessage);
+                ChooseMessageSenderJob::dispatch(json_decode($message->body, true));
             } catch(\Exception $e) {
                 throw new \Exception($e->getMessage());
             }
