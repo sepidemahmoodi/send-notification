@@ -1,7 +1,7 @@
 <?php
 namespace App\Classes;
 
-use App\Jobs\ChooseMessageSenderJob;
+use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 class ConsumeMessage
@@ -15,16 +15,8 @@ class ConsumeMessage
         $this->connection = $queueConnection;
     }
 
-    public function consume()
+    public function consume(AMQPChannel $channel, $callback)
     {
-        $channel = $this->connection->channel();
-        $callback = function ($message){
-            try {
-                ChooseMessageSenderJob::dispatch(json_decode($message->body, true));
-            } catch(\Exception $e) {
-                throw new \Exception($e->getMessage());
-            }
-        };
         $channel->basic_consume(
             self::QUEUE_NAME,
             '',

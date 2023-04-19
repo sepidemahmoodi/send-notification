@@ -3,8 +3,9 @@ namespace Tests\Unit\Classes;
 
 use App\Classes\ConsumeMessage;
 use App\Jobs\ChooseMessageSenderJob;
+use Illuminate\Support\Facades\Bus;
+use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Message\AMQPMessage;
 use Tests\TestCase;
 
 class ConsumeMessageTest extends TestCase
@@ -12,21 +13,11 @@ class ConsumeMessageTest extends TestCase
     public function testConsume()
     {
         $mockConnection = $this->createMock(AMQPStreamConnection::class);
+        $mockChannel = $this->createMock(AMQPChannel::class);
 
-        $mockChannel = $this->createMock(\PhpAmqpLib\Channel\AMQPChannel::class);
-
-        $mockConnection->expects($this->once())
+        $mockConnection->expects($this->any())
             ->method('channel')
             ->willReturn($mockChannel);
-
-        $mockMessage = new AMQPMessage('{"test":"data"}');
-        $callback = function($message) use ($mockMessage) {
-            try {
-                ChooseMessageSenderJob::dispatch(json_decode($mockMessage->body, true));
-            } catch(\Exception $e) {
-                throw new \Exception($e->getMessage());
-            }
-        };
 
         $mockChannel->expects($this->once())
             ->method('basic_consume')
@@ -37,7 +28,9 @@ class ConsumeMessageTest extends TestCase
                 true,
                 false,
                 false,
-                $callback
+                function ($message){
+                    echo 'something';
+                }
             );
 
         $mockChannel->expects($this->once())
@@ -47,13 +40,9 @@ class ConsumeMessageTest extends TestCase
         $mockChannel->expects($this->once())
             ->method('close');
 
-        $mockChannel->expects($this->any())
-            ->method('wait')
-            ->willReturnCallback($callback);
-
         $consumeMessage = new ConsumeMessage($mockConnection);
 
-        $result = $consumeMessage->consume();
+        $result = $consumeMessage->consume($mockChannel, function () {});
 
         $this->assertEquals('Consuming process completed', $result);
     }
