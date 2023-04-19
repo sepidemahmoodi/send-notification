@@ -11,12 +11,23 @@ class SmsSenderAdapter implements SenderAdapterInterface
     private $code;
     private $client;
 
+    /**
+     * SmsSenderAdapter constructor.
+     * @param string $baseUrl
+     */
     public function __construct(string $baseUrl)
     {
         $this->baseUrl = $baseUrl;
         $this->client = new Client();
     }
 
+    /**
+     * @param string $to
+     * @param string $subject
+     * @param string $message
+     * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function doOperation(string $to, string $subject, string $message): bool
     {
         try {

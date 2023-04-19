@@ -3,6 +3,11 @@ namespace App\Classes\NotificationSender;
 
 class EmailSender implements SenderInterface
 {
+    /**
+     * @param array $data
+     * @return bool
+     * @throws \Exception
+     */
     public function send(array $data)
     {
         try {

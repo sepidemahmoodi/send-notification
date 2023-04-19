@@ -12,6 +12,10 @@ class SenderProcessor
         $this->sender = $sender;
     }
 
+    /**
+     * @param array $data
+     * @throws \Exception
+     */
     public function sendProcess(array $data)
     {
         try {

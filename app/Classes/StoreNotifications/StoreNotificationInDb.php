@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\DB;
 
 class StoreNotificationInDb implements StoreNotificationInterface
 {
+    /**
+     * @param array $data
+     */
     public function store(array $data)
     {
         DB::table('logs')->insert([

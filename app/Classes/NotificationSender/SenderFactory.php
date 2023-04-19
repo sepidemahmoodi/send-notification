@@ -3,6 +3,11 @@ namespace App\Classes\NotificationSender;
 
 class SenderFactory
 {
+    /**
+     * @param $type
+     * @return EmailSender|SmsSender
+     * @throws \Exception
+     */
     public static function choose($type) {
         switch ($type) {
             case 'sms':
